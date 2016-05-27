@@ -31,7 +31,7 @@ public class DefaultAnimationHandler extends MenuAnimationHandler {
     }
 
     @Override
-    public void animateMenuOpgitening(Point center) {
+    public void animateMenuOpening(Point center) {
         super.animateMenuOpening(center);
 
         setAnimating(true);
