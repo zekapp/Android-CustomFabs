@@ -36,6 +36,8 @@ public class DefaultAnimationHandler extends MenuAnimationHandler {
 
         setAnimating(true);
 
+        openPanel(center);
+
         Animator lastAnimation = null;
         for (int i = 0; i < menu.getSubActionItems().size(); i++) {
 
@@ -69,11 +71,35 @@ public class DefaultAnimationHandler extends MenuAnimationHandler {
 
     }
 
+    private void openPanel(Point center) {
+
+        if (menu.getBackPanel() == null) return;
+
+        menu.getBackPanel().view.setScaleX(0);
+        menu.getBackPanel().view.setScaleY(0);
+        menu.getBackPanel().view.setAlpha(0);
+
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, menu.getBackPanel().x - center.x + menu.getBackPanel().width / 2);
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, menu.getBackPanel().y - center.y + menu.getBackPanel().height / 2);
+        PropertyValuesHolder pvhsX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1);
+        PropertyValuesHolder pvhsY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1);
+        PropertyValuesHolder pvhA = PropertyValuesHolder.ofFloat(View.ALPHA, 1);
+
+        final ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(menu.getBackPanel().view, pvhX, pvhY, pvhsX, pvhsY, pvhA);
+        animation.setDuration(DURATION);
+        animation.setInterpolator(new OvershootInterpolator(0.9f));
+        animation.addListener(new SubActionItemAnimationListener(menu.getBackPanel(), ActionType.OPENING));
+        animation.start();
+
+    }
+
     @Override
     public void animateMenuClosing(Point center) {
         super.animateMenuOpening(center);
 
         setAnimating(true);
+
+        closePanel(center);
 
         Animator lastAnimation = null;
         for (int i = 0; i < menu.getSubActionItems().size(); i++) {
@@ -99,6 +125,29 @@ public class DefaultAnimationHandler extends MenuAnimationHandler {
         if(lastAnimation != null) {
             lastAnimation.addListener(new LastAnimationListener());
         }
+    }
+
+
+    private void closePanel(Point center) {
+
+        if (menu.getBackPanel() == null) return;
+
+        menu.getBackPanel().view.setScaleX(0);
+        menu.getBackPanel().view.setScaleY(0);
+        menu.getBackPanel().view.setAlpha(0);
+
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X,  - (menu.getBackPanel().x - center.x + menu.getBackPanel().width / 2));
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y,  - (menu.getBackPanel().y - center.y + menu.getBackPanel().height / 2));
+        PropertyValuesHolder pvhsX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0);
+        PropertyValuesHolder pvhsY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0);
+        PropertyValuesHolder pvhA = PropertyValuesHolder.ofFloat(View.ALPHA, 0);
+
+        final ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(menu.getBackPanel().view, pvhX, pvhY, pvhsX, pvhsY, pvhA);
+        animation.setDuration(DURATION);
+        animation.setInterpolator(new OvershootInterpolator(0.9f));
+        animation.addListener(new SubActionItemAnimationListener(menu.getBackPanel(), ActionType.OPENING));
+        animation.start();
+
     }
 
     @Override

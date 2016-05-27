@@ -57,6 +57,8 @@ public class FloatingActionMenu {
     private FrameLayout overlayContainer;
 
     private OrientationEventListener orientationListener;
+    /** back panel of the floation action button */
+    private Item mBackPanel;
 
     /**
      * Constructor that takes the parameters collected using {@link FloatingActionMenu.Builder}
@@ -386,6 +388,10 @@ public class FloatingActionMenu {
         return subActionItems;
     }
 
+
+    public Item getBackPanel(){
+        return mBackPanel;
+    }
     /**
      * Finds and returns the main content view from the Activity context.
      * @return the main content view
