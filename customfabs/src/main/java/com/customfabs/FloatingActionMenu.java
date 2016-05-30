@@ -1,6 +1,3 @@
-/*
- *   Copyright 2014 Oguz Bilgener
- */
 package com.customfabs;
 
 import android.app.Activity;
@@ -43,6 +40,8 @@ public class FloatingActionMenu {
     private int radius;
     /** List of menu items */
     private List<Item> subActionItems;
+    /** Back panel of the floatin action button*/
+    private Item backPanelView;
     /** Reference to the preferred {@link MenuAnimationHandler} object */
     private MenuAnimationHandler animationHandler;
     /** Reference to a listener that listens open/close actions */
@@ -58,7 +57,6 @@ public class FloatingActionMenu {
 
     private OrientationEventListener orientationListener;
     /** back panel of the floation action button */
-    private Item mBackPanel;
 
     /**
      * Constructor that takes the parameters collected using {@link FloatingActionMenu.Builder}
@@ -67,6 +65,7 @@ public class FloatingActionMenu {
      * @param endAngle
      * @param radius
      * @param subActionItems
+     * @param backPanelView
      * @param animationHandler
      * @param animated
      */
@@ -75,6 +74,7 @@ public class FloatingActionMenu {
                               int endAngle,
                               int radius,
                               List<Item> subActionItems,
+                              Item backPanelView,
                               MenuAnimationHandler animationHandler,
                               boolean animated,
                               MenuStateChangeListener stateChangeListener,
@@ -84,6 +84,7 @@ public class FloatingActionMenu {
         this.endAngle = endAngle;
         this.radius = radius;
         this.subActionItems = subActionItems;
+        this.backPanelView = backPanelView;
         this.animationHandler = animationHandler;
         this.animated = animated;
         this.systemOverlay = systemOverlay;
@@ -109,6 +110,8 @@ public class FloatingActionMenu {
             overlayContainer = null; // beware NullPointerExceptions!
         }
 
+        attachBackPanelSize(backPanelView);
+
         // Find items with undefined sizes
         for(final Item item : subActionItems) {
             if(item.width == 0 || item.height == 0) {
@@ -125,6 +128,7 @@ public class FloatingActionMenu {
                 item.view.post(new ItemViewQueueListener(item));
             }
         }
+
 
         if(systemOverlay) {
             orientationListener = new OrientationEventListener(mainActionView.getContext(), SensorManager.SENSOR_DELAY_UI) {
@@ -144,6 +148,21 @@ public class FloatingActionMenu {
                 }
             };
             orientationListener.enable();
+        }
+    }
+
+    private void attachBackPanelSize(Item backPanelView) {
+        if (backPanelView == null) return;
+
+        // Find back panel with undefined sizes
+        if (backPanelView.width == 0 || backPanelView.height == 0){
+            // Figure out the size by temporarily adding it to the Activity content view hierarchy
+            // and ask the size from the system
+            addViewToBackOfCurrentContainer(backPanelView.view);
+            // Make item view invisible, just in case
+            backPanelView.view.setAlpha(0);
+            // Wait for the right time to set the size of item.
+            backPanelView.view.post(new ItemViewQueueListener(backPanelView));
         }
     }
 
@@ -173,6 +192,9 @@ public class FloatingActionMenu {
                 // Do not proceed if there is an animation currently going on.
                 return;
             }
+
+
+            addBackPanel(center, overlayParams);
 
             for (int i = 0; i < subActionItems.size(); i++) {
                 // It is required that these Item views are not currently added to any parent
@@ -223,6 +245,25 @@ public class FloatingActionMenu {
             stateChangeListener.onMenuOpened(this);
         }
 
+    }
+
+    private void addBackPanel(Point center, WindowManager.LayoutParams overlayParams) {
+        if (backPanelView == null) return;
+
+        if (backPanelView.view.getParent() != null) {
+            throw new RuntimeException("Back panel of FAB button have to be independent from a parent.");
+        }
+
+        final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(backPanelView.width, backPanelView.height, Gravity.TOP | Gravity.LEFT);
+
+        if(systemOverlay) {
+            params.setMargins(center.x - overlayParams.x - backPanelView.width / 2, center.y - overlayParams.y - backPanelView.height / 2, 0, 0);
+        }
+        else {
+            params.setMargins(center.x - backPanelView.width / 2, center.y - backPanelView.height / 2, 0, 0);
+        }
+
+        addViewToBackOfCurrentContainer(backPanelView.view, params);
     }
 
     /**
@@ -370,7 +411,12 @@ public class FloatingActionMenu {
             // get the x and y values of these points and set them to each of sub action items.
             subActionItems.get(i).x = (int) coords[0] - subActionItems.get(i).width / 2;
             subActionItems.get(i).y = (int) coords[1] - subActionItems.get(i).height / 2;
+
         }
+
+        backPanelView.x = center.x - backPanelView.width / 2;
+        backPanelView.y = center.y - backPanelView.height / 2;
+
         return center;
     }
 
@@ -389,8 +435,8 @@ public class FloatingActionMenu {
     }
 
 
-    public Item getBackPanel(){
-        return mBackPanel;
+    public Item getBackPanelView(){
+        return backPanelView;
     }
     /**
      * Finds and returns the main content view from the Activity context.
@@ -433,6 +479,31 @@ public class FloatingActionMenu {
             }
         }
     }
+    private void addViewToBackOfCurrentContainer(View view) {
+        addViewToBackOfCurrentContainer(view, null);
+    }
+
+    private void addViewToBackOfCurrentContainer(View view, ViewGroup.LayoutParams  layoutParams) {
+        if(systemOverlay) {
+            overlayContainer.addView(view, layoutParams);
+        }
+        else {
+            try {
+                if(layoutParams != null) {
+                    FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) layoutParams;
+                    ((ViewGroup) getActivityContentView()).addView(view,0, lp);
+                }
+                else {
+                    ((ViewGroup) getActivityContentView()).addView(view,0);
+                }
+            }
+            catch(ClassCastException e) {
+                throw new ClassCastException("layoutParams must be an instance of " +
+                        "FrameLayout.LayoutParams.");
+            }
+        }
+    }
+
 
     public void attachOverlayContainer() {
         try {
@@ -611,6 +682,7 @@ public class FloatingActionMenu {
         private int radius;
         private View actionView;
         private List<Item> subActionItems;
+        private Item backPanelView;
         private MenuAnimationHandler animationHandler;
         private boolean animated;
         private MenuStateChangeListener stateChangeListener;
@@ -648,6 +720,25 @@ public class FloatingActionMenu {
 
         public Builder addSubActionView(View subActionView, int width, int height) {
             subActionItems.add(new Item(subActionView, width, height));
+            return this;
+        }
+
+        /**
+         * Adds a back panel view that is already alive, but not added to a parent View.
+         * @param backPanelView a view for the back panel
+         * @return the builder object itself
+         */
+        public Builder addBackPanelView(View backPanelView) {
+            if(systemOverlay) {
+                throw new RuntimeException("Sub action views cannot be added without " +
+                        "definite width and height. Please use " +
+                        "other methods named addSubActionView");
+            }
+            return this.addBackPanelView(backPanelView, 0);
+        }
+
+        public Builder addBackPanelView(View backPanelView, int size) {
+            this.backPanelView = new Item(backPanelView, size, size);
             return this;
         }
 
@@ -725,6 +816,7 @@ public class FloatingActionMenu {
                                           endAngle,
                                           radius,
                                           subActionItems,
+                                          backPanelView,
                                           animationHandler,
                                           animated,
                                           stateChangeListener,

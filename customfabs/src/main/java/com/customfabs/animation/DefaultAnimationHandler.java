@@ -1,6 +1,3 @@
-/*
- *   Copyright 2014 Oguz Bilgener
- */
 package com.customfabs.animation;
 
 import android.animation.Animator;
@@ -23,6 +20,8 @@ public class DefaultAnimationHandler extends MenuAnimationHandler {
     protected static final int DURATION = 500;
     /** duration to wait between each of  */
     protected static final int LAG_BETWEEN_ITEMS = 20;
+    /** duration to wait for back panel  */
+    private static final long LAG_CLOSING_BACK_PANEL = 100;
     /** holds the current state of animation */
     private boolean animating;
 
@@ -30,13 +29,15 @@ public class DefaultAnimationHandler extends MenuAnimationHandler {
         setAnimating(false);
     }
 
+
     @Override
     public void animateMenuOpening(Point center) {
         super.animateMenuOpening(center);
 
         setAnimating(true);
 
-        openPanel(center);
+        if (menu.getBackPanelView() != null)
+            openPanel(center);
 
         Animator lastAnimation = null;
         for (int i = 0; i < menu.getSubActionItems().size(); i++) {
@@ -71,35 +72,11 @@ public class DefaultAnimationHandler extends MenuAnimationHandler {
 
     }
 
-    private void openPanel(Point center) {
-
-        if (menu.getBackPanel() == null) return;
-
-        menu.getBackPanel().view.setScaleX(0);
-        menu.getBackPanel().view.setScaleY(0);
-        menu.getBackPanel().view.setAlpha(0);
-
-        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, menu.getBackPanel().x - center.x + menu.getBackPanel().width / 2);
-        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, menu.getBackPanel().y - center.y + menu.getBackPanel().height / 2);
-        PropertyValuesHolder pvhsX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1);
-        PropertyValuesHolder pvhsY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1);
-        PropertyValuesHolder pvhA = PropertyValuesHolder.ofFloat(View.ALPHA, 1);
-
-        final ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(menu.getBackPanel().view, pvhX, pvhY, pvhsX, pvhsY, pvhA);
-        animation.setDuration(DURATION);
-        animation.setInterpolator(new OvershootInterpolator(0.9f));
-        animation.addListener(new SubActionItemAnimationListener(menu.getBackPanel(), ActionType.OPENING));
-        animation.start();
-
-    }
-
     @Override
     public void animateMenuClosing(Point center) {
         super.animateMenuOpening(center);
 
         setAnimating(true);
-
-        closePanel(center);
 
         Animator lastAnimation = null;
         for (int i = 0; i < menu.getSubActionItems().size(); i++) {
@@ -122,32 +99,55 @@ public class DefaultAnimationHandler extends MenuAnimationHandler {
             animation.setStartDelay((menu.getSubActionItems().size() - i) * LAG_BETWEEN_ITEMS);
             animation.start();
         }
+
+        if (menu.getBackPanelView() != null)
+            lastAnimation = closePanel(center);
+
         if(lastAnimation != null) {
             lastAnimation.addListener(new LastAnimationListener());
         }
     }
 
+    private ObjectAnimator openPanel(Point center) {
 
-    private void closePanel(Point center) {
+        menu.getBackPanelView().view.setScaleX(0);
+        menu.getBackPanelView().view.setScaleY(0);
+        menu.getBackPanelView().view.setAlpha(0);
 
-        if (menu.getBackPanel() == null) return;
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, menu.getBackPanelView().x - center.x + menu.getBackPanelView().width / 2);
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, menu.getBackPanelView().y - center.y + menu.getBackPanelView().height / 2);
+        PropertyValuesHolder pvhR = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
+        PropertyValuesHolder pvhsX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1);
+        PropertyValuesHolder pvhsY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1);
+        PropertyValuesHolder pvhA = PropertyValuesHolder.ofFloat(View.ALPHA, 1);
 
-        menu.getBackPanel().view.setScaleX(0);
-        menu.getBackPanel().view.setScaleY(0);
-        menu.getBackPanel().view.setAlpha(0);
+        final ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(menu.getBackPanelView().view, pvhX, pvhY, pvhR, pvhsX, pvhsY, pvhA);
+        animation.setDuration(DURATION);
+        animation.setInterpolator(new OvershootInterpolator(0.9f));
+        animation.addListener(new SubActionItemAnimationListener(menu.getBackPanelView(), ActionType.OPENING));
+        animation.start();
 
-        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X,  - (menu.getBackPanel().x - center.x + menu.getBackPanel().width / 2));
-        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y,  - (menu.getBackPanel().y - center.y + menu.getBackPanel().height / 2));
+        return animation;
+    }
+
+    private ObjectAnimator closePanel(Point center) {
+
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X,   - (menu.getBackPanelView().x - center.x + menu.getBackPanelView().width / 2));
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y,   - (menu.getBackPanelView().y - center.y + menu.getBackPanelView().height / 2));
+        PropertyValuesHolder pvhR = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
         PropertyValuesHolder pvhsX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0);
         PropertyValuesHolder pvhsY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0);
         PropertyValuesHolder pvhA = PropertyValuesHolder.ofFloat(View.ALPHA, 0);
 
-        final ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(menu.getBackPanel().view, pvhX, pvhY, pvhsX, pvhsY, pvhA);
+
+        final ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(menu.getBackPanelView().view, pvhX, pvhY,pvhR, pvhsX, pvhsY, pvhA);
         animation.setDuration(DURATION);
-        animation.setInterpolator(new OvershootInterpolator(0.9f));
-        animation.addListener(new SubActionItemAnimationListener(menu.getBackPanel(), ActionType.OPENING));
+        animation.setInterpolator(new AccelerateDecelerateInterpolator());
+        animation.addListener(new SubActionItemAnimationListener(menu.getBackPanelView(), ActionType.CLOSING));
+        animation.setStartDelay(LAG_CLOSING_BACK_PANEL);
         animation.start();
 
+        return animation;
     }
 
     @Override

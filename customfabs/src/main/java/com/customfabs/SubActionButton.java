@@ -1,6 +1,3 @@
-/*
- *   Copyright 2014 Oguz Bilgener
- */
 package com.customfabs;
 
 import android.content.Context;
@@ -95,6 +92,7 @@ public class SubActionButton extends FrameLayout {
         private Drawable backgroundDrawable;
         private View contentView;
         private FrameLayout.LayoutParams contentParams;
+        private boolean systemOverlay;
 
         public Builder(Context context) {
             this.context = context;
@@ -122,13 +120,16 @@ public class SubActionButton extends FrameLayout {
         }
 
         public Builder setContentView(View contentView) {
-            this.contentView = contentView;
-            return this;
+            return setContentView(contentView, null);
         }
 
-        public Builder setContentView(View contentView, FrameLayout.LayoutParams contentParams) {
+        public Builder setContentView(View contentView, LayoutParams contentParams) {
             this.contentView = contentView;
             this.contentParams = contentParams;
+            return this;
+        }
+        public Builder setSystemOverlay(boolean systemOverlay) {
+            this.systemOverlay = systemOverlay;
             return this;
         }
 

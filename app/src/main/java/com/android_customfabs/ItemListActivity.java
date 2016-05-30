@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 
 import com.android_customfabs.dummy.DummyContent;
+import com.customfabs.FloatingActionBackPanel;
 import com.customfabs.FloatingActionButton;
 import com.customfabs.FloatingActionMenu;
 import com.customfabs.SubActionButton;
@@ -69,6 +70,7 @@ public class ItemListActivity extends AppCompatActivity {
         // FAB Button
         final ImageView fabIconNew = new ImageView(this);
         fabIconNew.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_new_light));
+        fabIconNew.setBackground(getResources().getDrawable(R.drawable.button_action_selector));
         final FloatingActionButton rightLowerButton = new FloatingActionButton.Builder(this)
                 .setContentView(fabIconNew)
                 .build();
@@ -77,18 +79,28 @@ public class ItemListActivity extends AppCompatActivity {
         ImageView itemIcon = new ImageView(this);
         itemIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_place));
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
+        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.sub_action_button_selector));
 
         ImageView itemIco2 = new ImageView(this);
         itemIco2.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_settings));
         SubActionButton.Builder itemBuilder2 = new SubActionButton.Builder(this);
+        itemBuilder2.setBackgroundDrawable(getResources().getDrawable(R.drawable.sub_action_button_selector));
 
         ImageView itemIcon3 = new ImageView(this);
         itemIcon3.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_video));
         SubActionButton.Builder itemBuilder3 = new SubActionButton.Builder(this);
+        itemBuilder3.setBackgroundDrawable(getResources().getDrawable(R.drawable.sub_action_button_selector));
 
         SubActionButton button1 = itemBuilder.setContentView(itemIcon).build();
         SubActionButton button2 = itemBuilder2.setContentView(itemIco2).build();
         SubActionButton button3 = itemBuilder3.setContentView(itemIcon3).build();
+
+
+        // SubFab button
+        ImageView backPanelImage = new ImageView(this);
+        FloatingActionBackPanel.Builder backPanelBuilder = new FloatingActionBackPanel.Builder(this);
+        backPanelBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
+        FloatingActionBackPanel backPanel = backPanelBuilder.setContentView(backPanelImage).build();
 
 
         // Menu Manager
@@ -96,6 +108,7 @@ public class ItemListActivity extends AppCompatActivity {
                 .addSubActionView(button1)
                 .addSubActionView(button2)
                 .addSubActionView(button3)
+                .addBackPanelView(backPanel)
                 .attachTo(rightLowerButton)
                 .build();
 

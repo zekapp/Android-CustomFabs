@@ -1,6 +1,3 @@
-/*
- *   Copyright 2014 Oguz Bilgener
- */
 package com.customfabs.animation;
 
 import android.animation.Animator;
