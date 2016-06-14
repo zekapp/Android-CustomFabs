@@ -2,6 +2,7 @@ package com.customfabs;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.PixelFormat;
@@ -444,7 +445,11 @@ public class FloatingActionMenu {
      */
     public View getActivityContentView() {
         try {
-            return ((Activity) mainActionView.getContext()).getWindow().getDecorView().findViewById(android.R.id.content);
+            if (mainActionView.getContext() instanceof ContextWrapper){
+                return ((Activity)((ContextWrapper) mainActionView.getContext()).getBaseContext()).getWindow().getDecorView().findViewById(android.R.id.content);
+            }else {
+                return ((Activity) mainActionView.getContext()).getWindow().getDecorView().findViewById(android.R.id.content);
+            }
         }
         catch(ClassCastException e) {
             throw new ClassCastException("Please provide an Activity context for this FloatingActionMenu.");

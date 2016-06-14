@@ -29,6 +29,12 @@
 
         <include layout="@layout/item_list"/>
 
+        <Button
+            android:id="@+id/centerActionButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="40dp"/>
+
     </FrameLayout>
 
     <!--<android.support.design.widget.FloatingActionButton-->
