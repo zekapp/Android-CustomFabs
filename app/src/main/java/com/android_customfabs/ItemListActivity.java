@@ -51,8 +51,8 @@ public class ItemListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-//        setUpFab();
-        setUpFabAttached();
+        setUpFab();
+//        setUpFabAttached();
 
         View recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
