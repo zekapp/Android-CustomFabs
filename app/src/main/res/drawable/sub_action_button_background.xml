@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <solid
-        android:color="#3fafdc"/>
+        android:color="#FF026E97"/>
 
     <size
         android:height="224dp"

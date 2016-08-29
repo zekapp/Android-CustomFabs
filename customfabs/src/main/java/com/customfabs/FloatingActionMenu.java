@@ -53,6 +53,8 @@ public class FloatingActionMenu {
     private boolean open;
     /** whether the menu is an overlay for all other activities */
     private boolean systemOverlay;
+    /** whether the menu is in some spesific FrameLayout*/
+    private View mMainContent = null;
     /** a simple layout to contain all the sub action views in the system overlay mode */
     private FrameLayout overlayContainer;
 
@@ -79,7 +81,8 @@ public class FloatingActionMenu {
                               MenuAnimationHandler animationHandler,
                               boolean animated,
                               MenuStateChangeListener stateChangeListener,
-                              final boolean systemOverlay) {
+                              final boolean systemOverlay,
+                              View mainContent) {
         this.mainActionView = mainActionView;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
@@ -89,6 +92,7 @@ public class FloatingActionMenu {
         this.animationHandler = animationHandler;
         this.animated = animated;
         this.systemOverlay = systemOverlay;
+        this.mMainContent = mainContent;
         // The menu is initially closed.
         this.open = false;
 
@@ -111,7 +115,7 @@ public class FloatingActionMenu {
             overlayContainer = null; // beware NullPointerExceptions!
         }
 
-        attachBackPanelSize(backPanelView);
+
 
         // Find items with undefined sizes
         for(final Item item : subActionItems) {
@@ -129,6 +133,8 @@ public class FloatingActionMenu {
                 item.view.post(new ItemViewQueueListener(item));
             }
         }
+
+        attachBackPanelSize(backPanelView);
 
 
         if(systemOverlay) {
@@ -150,6 +156,8 @@ public class FloatingActionMenu {
             };
             orientationListener.enable();
         }
+
+
     }
 
     private void attachBackPanelSize(Item backPanelView) {
@@ -193,7 +201,6 @@ public class FloatingActionMenu {
                 // Do not proceed if there is an animation currently going on.
                 return;
             }
-
 
             addBackPanel(center, overlayParams);
 
@@ -369,6 +376,9 @@ public class FloatingActionMenu {
         }
         return new Point(coords[0], coords[1]);
     }
+    public View getMainActionView(){
+        return mainActionView;
+    }
 
     /**
      * Returns the center point of the main action view
@@ -445,6 +455,9 @@ public class FloatingActionMenu {
      */
     public View getActivityContentView() {
         try {
+            if (mMainContent != null)
+                return mMainContent;
+
             if (mainActionView.getContext() instanceof ContextWrapper){
                 return ((Activity)((ContextWrapper) mainActionView.getContext()).getBaseContext()).getWindow().getDecorView().findViewById(android.R.id.content);
             }else {
@@ -473,9 +486,11 @@ public class FloatingActionMenu {
                 if(layoutParams != null) {
                     FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) layoutParams;
                     ((ViewGroup) getActivityContentView()).addView(view, lp);
+//                    ((ViewGroup)mMainContent).addView(view,lp);
                 }
                 else {
                     ((ViewGroup) getActivityContentView()).addView(view);
+//                    ((ViewGroup)mMainContent).addView(view);
                 }
             }
             catch(ClassCastException e) {
@@ -496,10 +511,12 @@ public class FloatingActionMenu {
             try {
                 if(layoutParams != null) {
                     FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) layoutParams;
-                    ((ViewGroup) getActivityContentView()).addView(view,0, lp);
+                    ((ViewGroup) getActivityContentView()).addView(view, lp);
+//                    ((ViewGroup)mMainContent).addView(view,lp);
                 }
                 else {
-                    ((ViewGroup) getActivityContentView()).addView(view,0);
+                    ((ViewGroup) getActivityContentView()).addView(view);
+//                    ((ViewGroup)mMainContent).addView(view);
                 }
             }
             catch(ClassCastException e) {
@@ -578,6 +595,7 @@ public class FloatingActionMenu {
         }
         else {
             ((ViewGroup)getActivityContentView()).removeView(view);
+//            ((ViewGroup)mMainContent).removeView(view);
         }
     }
 
@@ -692,6 +710,7 @@ public class FloatingActionMenu {
         private boolean animated;
         private MenuStateChangeListener stateChangeListener;
         private boolean systemOverlay;
+        private View mMainContent;
 
         public Builder(Context context, boolean systemOverlay) {
             subActionItems = new ArrayList<Item>();
@@ -815,6 +834,11 @@ public class FloatingActionMenu {
             return this;
         }
 
+        public Builder onMainContent(View mainContent) {
+            mMainContent = mainContent;
+            return this;
+        }
+
         public FloatingActionMenu build() {
             return new FloatingActionMenu(actionView,
                                           startAngle,
@@ -825,8 +849,10 @@ public class FloatingActionMenu {
                                           animationHandler,
                                           animated,
                                           stateChangeListener,
-                                          systemOverlay);
+                                          systemOverlay, mMainContent);
         }
+
+
     }
 
     public static WindowManager.LayoutParams getDefaultSystemWindowParams() {

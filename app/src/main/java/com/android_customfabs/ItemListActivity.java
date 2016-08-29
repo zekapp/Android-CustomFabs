@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +15,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.android_customfabs.dummy.DummyContent;
 import com.customfabs.FloatingActionBackPanel;
-import com.customfabs.FloatingActionButton;
 import com.customfabs.FloatingActionMenu;
 import com.customfabs.SubActionButton;
 
@@ -51,8 +50,8 @@ public class ItemListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        setUpFab();
-//        setUpFabAttached();
+//        setUpFab();
+        setUpFabAttached();
 
         View recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
@@ -67,8 +66,9 @@ public class ItemListActivity extends AppCompatActivity {
         }
     }
 
+
     private void setUpFabAttached() {
-        Button fabIconNew = (Button) findViewById(R.id.centerActionButton);
+        final Button fabIconNew = (Button) findViewById(R.id.centerActionButton);
 
         fabIconNew.setBackground(getResources().getDrawable(R.drawable.button_action_selector));
 
@@ -92,6 +92,13 @@ public class ItemListActivity extends AppCompatActivity {
         SubActionButton button2 = itemBuilder2.setContentView(itemIco2).build();
         SubActionButton button3 = itemBuilder3.setContentView(itemIcon3).build();
 
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ItemListActivity.this,"Clicked",Toast.LENGTH_SHORT).show();
+            }
+        });
+
         // SubFab button
         ImageView backPanelImage = new ImageView(this);
         FloatingActionBackPanel.Builder backPanelBuilder = new FloatingActionBackPanel.Builder(this);
@@ -99,6 +106,8 @@ public class ItemListActivity extends AppCompatActivity {
         FloatingActionBackPanel backPanel = backPanelBuilder.setContentView(backPanelImage).build();
 
 
+
+        View mainView = findViewById(R.id.parent);
         // Menu Manager
         FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
                 .addSubActionView(button1)
@@ -106,53 +115,7 @@ public class ItemListActivity extends AppCompatActivity {
                 .addSubActionView(button3)
                 .addBackPanelView(backPanel)
                 .attachTo(fabIconNew)
-                .build();
-    }
-    private void setUpFab() {
-
-        // FAB Button
-        final ImageView fabIconNew = new ImageView(this);
-        fabIconNew.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_new_light));
-        fabIconNew.setBackground(getResources().getDrawable(R.drawable.button_action_selector));
-        final FloatingActionButton rightLowerButton = new FloatingActionButton.Builder(this)
-                .setContentView(fabIconNew)
-                .build();
-
-        // SubFab button
-        ImageView itemIcon = new ImageView(this);
-        itemIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_place));
-        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
-        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.sub_action_button_selector));
-
-        ImageView itemIco2 = new ImageView(this);
-        itemIco2.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_settings));
-        SubActionButton.Builder itemBuilder2 = new SubActionButton.Builder(this);
-        itemBuilder2.setBackgroundDrawable(getResources().getDrawable(R.drawable.sub_action_button_selector));
-
-        ImageView itemIcon3 = new ImageView(this);
-        itemIcon3.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_video));
-        SubActionButton.Builder itemBuilder3 = new SubActionButton.Builder(this);
-        itemBuilder3.setBackgroundDrawable(getResources().getDrawable(R.drawable.sub_action_button_selector));
-
-        SubActionButton button1 = itemBuilder.setContentView(itemIcon).build();
-        SubActionButton button2 = itemBuilder2.setContentView(itemIco2).build();
-        SubActionButton button3 = itemBuilder3.setContentView(itemIcon3).build();
-
-
-        // SubFab button
-        ImageView backPanelImage = new ImageView(this);
-        FloatingActionBackPanel.Builder backPanelBuilder = new FloatingActionBackPanel.Builder(this);
-        backPanelBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
-        FloatingActionBackPanel backPanel = backPanelBuilder.setContentView(backPanelImage).build();
-
-
-        // Menu Manager
-        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
-                .addSubActionView(button1)
-                .addSubActionView(button2)
-                .addSubActionView(button3)
-                .addBackPanelView(backPanel)
-                .attachTo(rightLowerButton)
+                .onMainContent(mainView)
                 .build();
 
         actionMenu.setStateChangeListener(new FloatingActionMenu.MenuStateChangeListener() {
@@ -172,8 +135,76 @@ public class ItemListActivity extends AppCompatActivity {
                 animator.start();
             }
         });
-
     }
+//    private void setUpFab() {
+//
+//        // FAB Button
+//        final ImageView fabIconNew = new ImageView(this);
+//        fabIconNew.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_new_light));
+//        fabIconNew.setBackground(getResources().getDrawable(R.drawable.button_action_selector));
+//        final FloatingActionButton rightLowerButton = new FloatingActionButton.Builder(this)
+//                .setContentView(fabIconNew)
+//                .build();
+//
+//        // SubFab button
+//        ImageView itemIcon = new ImageView(this);
+//        itemIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_place));
+//        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
+//        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.sub_action_button_selector));
+//
+//        ImageView itemIco2 = new ImageView(this);
+//        itemIco2.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_settings));
+//        SubActionButton.Builder itemBuilder2 = new SubActionButton.Builder(this);
+//        itemBuilder2.setBackgroundDrawable(getResources().getDrawable(R.drawable.sub_action_button_selector));
+//
+//        ImageView itemIcon3 = new ImageView(this);
+//        itemIcon3.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_video));
+//        SubActionButton.Builder itemBuilder3 = new SubActionButton.Builder(this);
+//        itemBuilder3.setBackgroundDrawable(getResources().getDrawable(R.drawable.sub_action_button_selector));
+//
+//
+//        SubActionButton button1 = itemBuilder.setContentView(itemIcon).build();
+//        SubActionButton button2 = itemBuilder2.setContentView(itemIco2).build();
+//        SubActionButton button3 = itemBuilder3.setContentView(itemIcon3).build();
+//
+//
+//        // SubFab button
+//        ImageView backPanelImage = new ImageView(this);
+//        backPanelImage.setImageDrawable(getResources().getDrawable(R.drawable.circle));
+//        FloatingActionBackPanel.Builder backPanelBuilder = new FloatingActionBackPanel.Builder(this);
+////        backPanelBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.circle));
+//        FloatingActionBackPanel backPanel = backPanelBuilder.setContentView(backPanelImage).build();
+//
+//
+//        // Menu Manager
+//        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
+//                .addSubActionView(button1)
+//                .addSubActionView(button2)
+//                .addSubActionView(button3)
+//                .addBackPanelView(backPanel)
+//                .attachTo(rightLowerButton)
+//                .build();
+//
+//        actionMenu.setStateChangeListener(new FloatingActionMenu.MenuStateChangeListener() {
+//            @Override
+//            public void onMenuOpened(FloatingActionMenu menu) {
+//                fabIconNew.setRotation(0);
+//                PropertyValuesHolder pvh = PropertyValuesHolder.ofFloat(View.ROTATION, 45);
+//                ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fabIconNew, pvh);
+//                animator.start();
+//
+//            }
+//
+//            @Override
+//            public void onMenuClosed(FloatingActionMenu menu) {
+//                fabIconNew.setRotation(45);
+//                PropertyValuesHolder pvh = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
+//                ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(fabIconNew, pvh);
+//                animator.start();
+//            }
+//        });
+//
+//    }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));

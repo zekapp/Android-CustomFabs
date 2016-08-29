@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 
-def libVer = '1.0.1'
+def libVer = '1.0.2'
 
 ext {
     bintrayRepo = 'Maven'
@@ -64,4 +64,4 @@ apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.
 // ./gradlew bintrayUpload
 
 // usage
-// compile 'com.zekapp.library:custom-fabs:1.0.0'
+// compile 'com.zekapp.library:custom-fabs:1.0.2'

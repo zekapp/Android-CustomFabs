@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.customfabs.FloatingActionMenu;
 
@@ -64,6 +65,7 @@ public abstract class MenuAnimationHandler {
         subActionItem.view.setAlpha(1);
         if(actionType == ActionType.OPENING) {
             FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) params;
+//            ViewGroup.LayoutParams lp = params;
             if(menu.isSystemOverlay()) {
                 WindowManager.LayoutParams overlayParams = (WindowManager.LayoutParams) menu.getOverlayContainer().getLayoutParams();
                 lp.setMargins(subActionItem.x - overlayParams.x, subActionItem.y - overlayParams.y, 0, 0);

@@ -1,9 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<vector xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:width="224dp"-->
+        <!--android:height="224dp"-->
+        <!--android:viewportHeight="32"-->
+        <!--android:viewportWidth="32">-->
+
+    <!--<path-->
+        <!--android:fillColor="#3fafdc"-->
+        <!--android:pathData="M22,32-->
+        <!--A10,10 0 1,1 42,32-->
+        <!--A10,10 0 1,1 22,32 Z" />-->
+<!--</vector>-->
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
     <solid
-        android:color="#3fafdc"/>
+        android:color="#703fafdc"/>
 
     <size
         android:width="224dp"

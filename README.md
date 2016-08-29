@@ -10,7 +10,7 @@ This library is a modification of [CircularFloatingActionMenu](https://github.co
 via Gradle:
 
     dependencies {
-      compile 'com.zekapp.library:customfabs:1.0.1'
+      compile 'com.zekapp.library:customfabs:1.0.2'
     }
   
 

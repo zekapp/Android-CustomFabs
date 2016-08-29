@@ -97,7 +97,7 @@ public class FloatingActionBackPanel extends FrameLayout {
 
             // Default floationActionBackPanel settings
             int size = context.getResources().getDimensionPixelSize(R.dimen.action_button_panel_size);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size, Gravity.BOTTOM | Gravity.RIGHT);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size, Gravity.BOTTOM | Gravity.LEFT);
             setLayoutParams(params);
             setTheme(SubActionButton.THEME_LIGHT);
         }
