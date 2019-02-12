@@ -3,7 +3,8 @@ Custom Floating Action Buttons for my ongoing project.
 
 [![Custom Floating Button](art/custom_fab.gif)]
 
-This library is a modification of [CircularFloatingActionMenu](https://github.com/oguzbilgener/CircularFloatingActionMenu)
+
+This library is inspired from [CircularFloatingActionMenu](https://github.com/oguzbilgener/CircularFloatingActionMenu)
 
 ## Download
 
